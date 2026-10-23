@@ -1,0 +1,65 @@
+{
+  "realm": "library",
+  "enabled": true,
+  "internationalizationEnabled": true,
+  "supportedLocales": ["en", "pl"],
+  "defaultLocale": "en",
+  "roles": {
+    "realm": [
+      { "name": "library-viewer", "description": "Read authors and books" },
+      { "name": "library-editor", "description": "Read, create, update and delete authors and books" }
+    ]
+  },
+  "clients": [
+    {
+      "clientId": "library-api",
+      "enabled": true,
+      "publicClient": false,
+      "secret": "library-api-secret",
+      "serviceAccountsEnabled": true,
+      "standardFlowEnabled": false,
+      "directAccessGrantsEnabled": false
+    },
+    {
+      "clientId": "library-ui",
+      "enabled": true,
+      "publicClient": true,
+      "standardFlowEnabled": true,
+      "directAccessGrantsEnabled": false,
+      "redirectUris": ["http://localhost:5173/*"],
+      "webOrigins": ["http://localhost:5173"],
+      "attributes": {
+        "pkce.code.challenge.method": "S256",
+        "post.logout.redirect.uris": "http://localhost:5173/*"
+      }
+    }
+  ],
+  "users": [
+    {
+      "username": "service-account-library-api",
+      "enabled": true,
+      "serviceAccountClientId": "library-api",
+      "realmRoles": ["library-editor"]
+    },
+    {
+      "username": "viewer",
+      "enabled": true,
+      "email": "viewer@example.com",
+      "emailVerified": true,
+      "firstName": "Demo",
+      "lastName": "Viewer",
+      "credentials": [{ "type": "password", "value": "viewer", "temporary": false }],
+      "realmRoles": ["library-viewer"]
+    },
+    {
+      "username": "editor",
+      "enabled": true,
+      "email": "editor@example.com",
+      "emailVerified": true,
+      "firstName": "Demo",
+      "lastName": "Editor",
+      "credentials": [{ "type": "password", "value": "editor", "temporary": false }],
+      "realmRoles": ["library-editor"]
+    }
+  ]
+}

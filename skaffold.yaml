@@ -1,0 +1,23 @@
+apiVersion: skaffold/v4beta13
+kind: Config
+metadata:
+  name: library-api
+build:
+  artifacts:
+    - image: library-api
+      jib: {}
+manifests:
+  kustomize:
+    paths:
+      - k8s
+deploy:
+  kubectl: {}
+portForward:
+  - resourceType: service
+    resourceName: library-api
+    port: 8080
+    localPort: 8081
+  - resourceType: service
+    resourceName: keycloak
+    port: 8080
+    localPort: 8080

@@ -1,0 +1,34 @@
+version: 2.1
+
+jobs:
+  build:
+    machine:
+      image: ubuntu-2404:current
+    steps:
+      - checkout
+      - run:
+          name: Install JDK 21
+          command: |
+            sudo apt-get update && sudo apt-get install -y openjdk-21-jdk-headless maven
+            echo 'export JAVA_HOME=/usr/lib/jvm/java-21-openjdk-amd64' >> "$BASH_ENV"
+      - restore_cache:
+          key: maven-{{ checksum "pom.xml" }}
+      - run:
+          name: Build and test
+          command: mvn -B clean verify
+      - run:
+          name: Check the OpenAPI contract is committed
+          command: git status --porcelain contract/ && test -z "$(git status --porcelain contract/)"
+      - save_cache:
+          key: maven-{{ checksum "pom.xml" }}
+          paths:
+            - ~/.m2
+      - store_test_results:
+          path: target/surefire-reports
+      - store_test_results:
+          path: target/failsafe-reports
+
+workflows:
+  build:
+    jobs:
+      - build
